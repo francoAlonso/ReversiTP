@@ -9,8 +9,8 @@
         <Filename Value="reversi.pas"/>
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
-        <TopLine Value="19"/>
-        <CursorPos X="23" Y="35"/>
+        <TopLine Value="33"/>
+        <CursorPos X="39" Y="44"/>
         <UsageCount Value="20"/>
         <Loaded Value="True"/>
       </Unit0>

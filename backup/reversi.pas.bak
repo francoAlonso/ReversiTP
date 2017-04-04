@@ -31,8 +31,8 @@ begin
              end;
       tablero[4,4]:='N';
       tablero[4,5]:='B';
-      tablero[5,4]:='N';
-      tablero[5,5]:='B';
+      tablero[5,4]:='B';
+      tablero[5,5]:='N';
 end;
 
 procedure dibujarTablero(tablero:tTablero);
@@ -41,7 +41,8 @@ begin
      for i:=0 to dimension do
          begin
          for n:=0 to dimension do
-             write(tablero[i,n]);
+             write(tablero[i,n], ' ');
+             writeln();
          writeln();
          end;
 end;

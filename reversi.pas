@@ -41,7 +41,7 @@ begin
      for i:=0 to dimension do
          begin
          for n:=0 to dimension do
-             write(tablero[i,n]);
+             write(tablero[i,n], ' ');
          writeln();
          end;
 end;
