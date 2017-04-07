@@ -3,6 +3,7 @@ program reversi;
 {$mode objfpc}{$H+}
 
 uses
+
   {$IFDEF UNIX}{$IFDEF UseCThreads}
   cthreads,
   {$ENDIF}{$ENDIF}
@@ -46,10 +47,28 @@ begin
          end;
 end;
 
-var tablero:tTablero;
+procedure ingresarFicha(var tablero:tTablero);
+          var input:string[2];
+              posicionX, posicionY, code:byte;
 begin
+     write('Ingrese su jugada: ');
+     read(input);
+     Val(input[1], posicionY, code);
+     Val(input[2], posicionX, code);
+     tablero[posicionX,posicionY]:='N';
+end;
+
+var tablero:tTablero;
+    juegoTerminado:boolean;
+begin
+  juegoTerminado:=false;
   inicializarTablero(tablero);
-  dibujarTablero(tablero);
-  readln();
+
+  while(juegoTerminado=false) do
+  begin
+       dibujarTablero(tablero);
+       ingresarFicha(tablero);
+       readln();
+  end;
 end.
 

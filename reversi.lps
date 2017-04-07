@@ -9,13 +9,13 @@
         <Filename Value="reversi.pas"/>
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
-        <TopLine Value="33"/>
-        <CursorPos X="39" Y="44"/>
-        <UsageCount Value="20"/>
+        <TopLine Value="43"/>
+        <CursorPos X="33" Y="58"/>
+        <UsageCount Value="22"/>
         <Loaded Value="True"/>
       </Unit0>
     </Units>
-    <JumpHistory Count="11" HistoryIndex="10">
+    <JumpHistory Count="21" HistoryIndex="20">
       <Position1>
         <Filename Value="reversi.pas"/>
         <Caret Line="26" Column="31" TopLine="12"/>
@@ -60,6 +60,46 @@
         <Filename Value="reversi.pas"/>
         <Caret Line="23" Column="49" TopLine="14"/>
       </Position11>
+      <Position12>
+        <Filename Value="reversi.pas"/>
+        <Caret Line="53" Column="18" TopLine="44"/>
+      </Position12>
+      <Position13>
+        <Filename Value="reversi.pas"/>
+        <Caret Line="54" Column="29" TopLine="41"/>
+      </Position13>
+      <Position14>
+        <Filename Value="reversi.pas"/>
+        <Caret Line="53" Column="20" TopLine="45"/>
+      </Position14>
+      <Position15>
+        <Filename Value="reversi.pas"/>
+        <Caret Line="54" Column="29" TopLine="45"/>
+      </Position15>
+      <Position16>
+        <Filename Value="reversi.pas"/>
+        <Caret Line="5" Column="6"/>
+      </Position16>
+      <Position17>
+        <Filename Value="reversi.pas"/>
+        <Caret Line="6" Column="3"/>
+      </Position17>
+      <Position18>
+        <Filename Value="reversi.pas"/>
+        <Caret Line="11" Column="14"/>
+      </Position18>
+      <Position19>
+        <Filename Value="reversi.pas"/>
+        <Caret Line="54" Column="22" TopLine="46"/>
+      </Position19>
+      <Position20>
+        <Filename Value="reversi.pas"/>
+        <Caret Line="15" TopLine="3"/>
+      </Position20>
+      <Position21>
+        <Filename Value="reversi.pas"/>
+        <Caret Line="54" Column="48" TopLine="47"/>
+      </Position21>
     </JumpHistory>
   </ProjectSession>
 </CONFIG>
