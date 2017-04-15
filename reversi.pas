@@ -59,6 +59,14 @@ function verificarValido():boolean;
 begin
      verificarValido:=true;
 end;
+procedure ContinuarJuego (*Variable para que cuente los Verificar validos falsos*);
+          var ContInv:byte; 
+          begin
+          if verificarValido=false then
+             ContInv:= ContInv+1;
+             (*Habria que agregar la condicion en el ciclo y setear el contador a 0 cuando empieza el ciclo*)
+          end;
+            
 
 procedure ingresarFicha(var tablero:tTablero; var posicionX:byte; var posicionY:byte; letra:char);
           var input:string[2];
