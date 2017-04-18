@@ -55,17 +55,41 @@ begin
          writeln();
          end;
 end;
+
 function verificarValido():boolean;
 begin
      verificarValido:=true;
 end;
-procedure ContinuarJuego (*Variable para que cuente los Verificar validos falsos*);
-          var ContInv:byte; 
-          begin
-          if verificarValido=false then
-             ContInv:= ContInv+1;
-             (*Habria que agregar la condicion en el ciclo y setear el contador a 0 cuando empieza el ciclo*)
-          end;
+
+procedure continuarJuego(var contInv:byte, var juegoTerminado:boolean);
+begin
+  if (sePuedeJugar()=false) then
+             contInv:= contInv+1;
+          else
+             contInv:=0;
+  if (contInv=2) then
+    juegoTerminado:=True;
+end;
+
+function sePuedeJugar (var tablero:tTablero):boolean;
+  var i,j:byte;
+      pepe:boolean;
+begin
+  i,j:=1;
+  pepe:=false;
+  
+  while (i<=dimension-1) and (pepe=false) do
+    begin 
+      while (j<=dimension-1) and (pepe=false) do
+      begin
+        if (verificarJugadaValida()=true) then
+          pepe:=true;
+        j:=j+1;
+      end;
+      i:=i+1;
+    end;
+    sePuedeJugar:=pepe;
+end;
             
 
 procedure ingresarFicha(var tablero:tTablero; var posicionX:byte; var posicionY:byte; letra:char);
@@ -121,13 +145,16 @@ end;
 var tablero:tTablero;
     juegoTerminado:boolean;
     posicionX, posicionY: byte;
+    contInv:byte;
 begin
+  contInv:=0;
   juegoTerminado:=false;
   inicializarTablero(tablero);
 
-  while(juegoTerminado=false) do
+  while (juegoTerminado=false) do
   begin
        dibujarTablero(tablero);
+       continuarJuego(contInv, juegoTerminado);
        ingresarFicha(tablero, posicionX, posicionY, 'N');
        botJuega(tablero);
        readln();
