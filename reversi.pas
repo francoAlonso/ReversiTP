@@ -83,19 +83,19 @@ function sePuedeJugar (var tablero:tTablero):boolean;
       pepe:boolean;
 begin
   i,j:=1;
-  pepe:=false;
+  jugada:=false;
   
-  while (i<=dimension-1) and (pepe=false) do
+  while (i<=dimension-1) and (jugada=false) do
     begin 
-      while (j<=dimension-1) and (pepe=false) do
+      while (j<=dimension-1) and (jugada=false) do
       begin
         if (verificarJugadaValida()=true) then
-          pepe:=true;
+          jugada:=true;
         j:=j+1;
       end;
       i:=i+1;
     end;
-    sePuedeJugar:=pepe;
+    sePuedeJugar:=jugada;
 end;
             
 
