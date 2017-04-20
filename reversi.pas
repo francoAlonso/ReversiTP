@@ -11,7 +11,14 @@ uses
   { you can add units after this };
 
 const dimension = 9;
+      MAX_VECTOR_CARGA= 8;
 type tTablero = array[0..dimension,0..dimension] of char;
+     trDatos=record
+       direccion:string [10];
+       jugadavalida:boolean;
+       fichasdarvuelta:byte;
+       end;
+     tVectorCarga=array [1..8] of trDatos;   
 
 procedure inicializarTablero(var tablero:tTablero);
    var i,n:byte;
@@ -113,6 +120,25 @@ begin
 
      tablero[posicionX,posicionY]:=letra;
 end;
+
+procedure CargarVector (rdatos:record, VectorCarga:tVectorCarga, posicionX, posicionY:byte);
+var i:byte;
+
+VectorCarga[1].direccion:= (1,0);   // derecha
+VectorCarga[2].direccion:= (-1,0);  // izquierda
+VectorCarga[3].direccion:= (0,1);   // arriba
+VectorCarga[4].direccion:= (0,-1);  // abajo
+VectorCarga[5].direccion:= (1,1);   // diagonal superior derecha
+VectorCarga[6].direccion:= (1,-1);  // diagonal inferior derecha
+VectorCarga[7].direccion:= (-1,1);  // diagonal superior izquierda
+VectorCarga[8].direccion:= (-1,-1); // diagonal inferior izquierda
+   for i:=1 to MAX_VECTOR_CARGA do
+    begin
+VectorCarga[i].jugadavalida: false;
+VectorCarga[i].fichasdarvuelta: 0;
+    end;
+ end;   
+ 
 procedure botJuega(var tablero:tTablero);
 var i,n:byte;
 begin
