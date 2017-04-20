@@ -80,7 +80,7 @@ end;
 
 function sePuedeJugar (var tablero:tTablero):boolean;
   var i,j:byte;
-      pepe:boolean;
+      jugada:boolean;
 begin
   i,j:=1;
   jugada:=false;
