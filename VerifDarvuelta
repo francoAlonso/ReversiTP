@@ -1,4 +1,4 @@
-function VerificarValido (tablero:tTablero;
+function VerificarValido (tablero:tTablero;         //beta :)
   posicionX:byte; posicionY:byte):boolean;
 var Valido: boolean;
   begin  Valido:=false
