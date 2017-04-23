@@ -1,0 +1,26 @@
+type
+ trJugadaBot=record
+  begin
+   X=byte;
+   Y=byte;
+   ContadorDeFichas=byte;
+  end;
+  tJugadaBot=array[1..64] of rJugadaBot;
+
+procedure JuegaBot ( tablero:tTablero; VerificarValido:boolean;
+  rJugadaBot:trJugadaBot; JugadaBot:tJugadaBot; posicionX:byte; posicionY:byte);
+var i:byte;
+begin
+    for i:=1 to 64 do
+    begin
+    JugadaBot.X:= posicionX;
+    JugadaBot.Y:= posicionY;
+    ContadorDeFichas:=ContadorDeFichas+FichasPosibles   //Faltaria el fichas Posibles
+    end;
+ end;
+ 
+ var rJugadaBot:trJugadaBot;
+     JugadaBot: tJugadaBot;
+ 
+ 
+                                                 
