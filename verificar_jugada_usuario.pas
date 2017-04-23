@@ -1,10 +1,4 @@
 
-program cargarvector;
-
-uses crt;
-var i : byte;
-
-
 procedure verificar_jugada_usuario (var vectorcarga:tvectorcarga,tablero:ttablero,posicionX:byte,posicionY:byte,ficha:char,fichacontraria:char)
 var i:byte;
 	t:byte;
