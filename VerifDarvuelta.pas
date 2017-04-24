@@ -21,3 +21,5 @@ var
   begin
   if (VerificarValido:=true) then
   FichaContraria:=FichaJugadorActual;
+  end;
+end;  
