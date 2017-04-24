@@ -29,7 +29,7 @@ var i,j:byte;
         begin
              for j:=1 to dimension do
                  begin
-                      if VerificarValido() then
+                      if verificar_jugada_usuario(vectorCarga,tablero,i,j,'N','B',) then
                       mJugadaBot[i,j].posX:=i;
                       mJugadaBot[i,j].posY:=j;
                  end;
