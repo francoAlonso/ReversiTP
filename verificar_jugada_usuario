@@ -1,0 +1,68 @@
+function verificar_jugada_usuario(var vectorcarga:tvectorcarga,tablero:ttablero,posicionX:byte,posicionY:byte,ficha:char,fichacontraria:char):boolean;
+var i:byte;
+	t:byte;
+	contador_fichas_invertidas:byte;
+	contador_direcciones_validas:byte;
+	valido:boolean;
+
+begin 
+	valido:=false;
+	contador_fichas_invertidas=0;
+	contador_direcciones_validas=0;
+	t=1;
+	
+	if tablero(posicionX,posicionY)='_' then
+	
+		begin
+	
+		for i:=1 to 8 do
+		
+		begin
+		
+			posicionX=posicionX+vectorcarga[i].direccionX
+			posicionY=posicionY+vectorcarga[i].direccionY
+			
+			if tablero(posicionX,posicionY)='fichacontraria' then
+					contador_fichas_invertidas=contador_fichas_invertidas+1
+				
+				begin
+					
+				while (posicionX>=1) and (posicionX<=8) and (posicionY>=1) and (posicionY<=8) and (t=1)
+				
+				begin
+		
+					posicionX=posicionX+vectorcarga[i].direccionX
+					posicionY=posicionY+vectorcarga[i].direccionY
+			
+					if tablero(posicionX,posicionY)='fichacontraria'
+					contador_fichas_invertidas=contador_fichas_invertidas+1
+					
+					if tablero(posicionX,posicionY)='ficha'
+					VectorCarga[i].jugadavalida='true'
+					contador_direcciones_validas=contador_direcciones_validas+1
+					VectorCarga[i].fichasdarvuelta=contador_fichas_invertidas
+					t=2
+					
+					if tablero(posicionX,posicionY)='_'
+					t=2
+					
+				end
+					
+				if contador_direcciones_validas=0 then
+				begin
+				valido:=false
+				writeln('Jugada invalida, ingrese nuevamente sus coordenadas.');
+				verificar_jugada_usuario=valido;
+				
+				else 
+				valido:=true
+				end
+				
+			end
+			
+	else
+	valido:=false
+	verificar_jugada_usuario=valido;
+	writeln('Jugada invalida, ingrese nuevamente sus coordenadas.')
+  
+  end
