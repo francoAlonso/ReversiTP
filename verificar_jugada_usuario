@@ -50,7 +50,7 @@ begin
 						contador_fichas_invertidas=contador_fichas_invertidas+1
 			
 						if tablero(posicionX,posicionY)='ficha'
-						VectorCarga[i].jugadavalida='true'
+						VectorCarga[i].direccionvalida='true'
 						contador_direcciones_validas=contador_direcciones_validas+1
 						VectorCarga[i].fichasdarvuelta=contador_fichas_invertidas
 						t=2
