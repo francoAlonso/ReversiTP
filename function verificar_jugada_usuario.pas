@@ -51,5 +51,6 @@ begin
 		end;
 		else 
 			valido:=true;
+			verificar_jugada_usuario=valido;
 	end;
 end;
