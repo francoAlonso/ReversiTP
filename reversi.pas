@@ -19,6 +19,12 @@ type
 		fichasADarVuelta:byte;
 	end;
 	tDireccion = array[1..dimension-1] of trDatos;
+	trJugadaBot=record
+		posX:byte;
+		posY:byte;
+		fichas:byte;
+	end;
+	tmJugadaBot=array[1..dimension-1,1..dimension-1] of trJugadaBot;
 	
 (*-----------------Inicializar Tablero-----------------------*)	
 
@@ -56,7 +62,7 @@ end;
 
 (*-------------------CargarVector-----------------------*)
 
-procedure cargarVector (vectorDireccion:tDireccion);
+procedure cargarVector (var vectorDireccion:tDireccion);
 	var i:byte;
 	
 begin
@@ -87,7 +93,7 @@ end;
 
 (*-----------------------------verificar_jugada_usuario-------------------------*)
 
-function verificar_jugada_usuario(var vectorDireccion:tDireccion; tablero:tTablero; posicionX:byte; posicionY:byte;
+function verificar_jugada(var vectorDireccion:tDireccion; tablero:tTablero; posicionX:byte; posicionY:byte;
  fichaAliada:char; fichaContraria:char):boolean;
 	var i:byte;
 		contador_fichas_invertidas:byte;
@@ -99,7 +105,7 @@ begin
 	contador_direcciones_validas:= 0;
 	
 	if not (tablero[posicionX,posicionY] = ESPACIO_EN_BLANCO) then //pregunta si el espacio no esta en blanco
-		verificar_jugada_usuario:=false
+		verificar_jugada:=false
 	else 
 	begin//en caso de estarlo
 		for i:=1 to dimension-1 do//este for va a recorrer el vector direccion que tiene todas las direcciones
@@ -135,11 +141,73 @@ begin
 		
 		if (contador_direcciones_validas = 0) then
 		begin//este if va a ser quien devuelva el valor de la funcion en base si hubo alguna direccion valida en el for
-			verificar_jugada_usuario:=false;
+			verificar_jugada:=false;
 		end
 		else 
-			verificar_jugada_usuario:=true;
+			verificar_jugada:=true;
 	end;
+end;
+
+(*------------------------cargarJugadaBot----------------------*)
+
+procedure cargarJugadaBot (var tablero:tTablero; var vectorDireccion:tDireccion;var mJugadaBot:tmJugadaBot);
+var i,j,k:byte;
+  begin
+    for i:=1 to dimension-1 do
+    begin
+		for j:=1 to dimension-1 do
+        begin
+			if ( verificar_jugada(vectorDireccion,tablero,i,j,FICHA_BOT,FICHA_JUGADOR) )then
+			begin
+				mJugadaBot[i,j].posX:=i;
+				mJugadaBot[i,j].posY:=j;
+				for k:=1 to dimension-1 do
+					mJugadaBot[i,j].fichas:= mJugadaBot[i,j].fichas+vectorDireccion[i].fichasADarVuelta;
+				
+			end;
+        end;
+	end;
+ end;
+
+(*------------------------ResetearJugadasBot--------------------*)
+
+procedure resetearJugadaBot (var mJugadaBot : tmJugadaBot);
+var i,j:byte;
+  begin
+    for i:=1 to dimension-1 do
+    begin
+		for j:=1 to dimension-1 do
+		begin
+			mJugadaBot[i,j].posX:=0;
+			mJugadaBot[i,j].posY:=0;
+			mJugadaBot[i,j].fichas:=0;
+        end;
+	end;
+end;
+
+(*-----------------------botGloton--------------------*)
+
+function botGloton(var mJugadaBot : tmJugadaBot):trJugadaBot;
+	var gloton:trJugadaBot;
+		i,n:byte;
+begin
+	gloton.posX:=0;
+	gloton.posY:=0;
+	gloton.fichas:=0;
+	
+	for i:=1 to dimension-1 do
+	begin
+		for n:=1 to dimension-1 do
+		begin
+			if(mJugadaBot[i,n].fichas>gloton.fichas) then
+			begin
+				gloton.posX:= mJugadaBot[i,n].posX;
+				gloton.posY:= mJugadaBot[i,n].posY;
+				gloton.fichas:= mJugadaBot[i,n].fichas;
+			end;
+		end;
+	end;
+	botGloton:= gloton;
 end;
 
 (*--------------------------DibujarTablero---------------------*)
@@ -147,12 +215,12 @@ end;
 procedure dibujarTablero(tablero:tTablero);
     var i,n:byte;
 begin
-	for i:=0 to dimension do
-	begin
-		for n:=0 to dimension do
-			write(tablero[i,n], ' ');
-		writeln();
-    end;
+     for i:=0 to dimension do
+         begin
+         for n:=0 to dimension do
+             write(tablero[i,n], ESPACIO_EN_BLANCO);
+         writeln();
+         end;
 end;
 
 (*----------------------Ingresar Ficha-----------------------*)
@@ -210,10 +278,9 @@ var tablero:tTablero;
     vectorDireccion: tDireccion;
     
 BEGIN
-
+	cargarVector(vectorDireccion);
 	juegoTerminado:=false;
 	inicializarTablero(tablero);
-	cargarVector(vectorDireccion);
 
 	while not(juegoTerminado) do
 	begin
