@@ -187,7 +187,7 @@ var i,j,k:byte;
 				mJugadaBot[i,j].posX:=i;
 				mJugadaBot[i,j].posY:=j;
 				for k:=1 to dimension-1 do
-					mJugadaBot[i,j].fichas:= mJugadaBot[i,j].fichas + vectorDireccion[i].fichasADarVuelta;
+					mJugadaBot[i,j].fichas:= mJugadaBot[i,j].fichas + vectorDireccion[k].fichasADarVuelta;
 				
 			end;
         end;
@@ -301,23 +301,42 @@ var tablero:tTablero;
     juegoTerminado:boolean;
     posicionX, posicionY: byte;
     vectorDireccion: tDireccion;
-    //posicionConMasFichas : trJugadaBot;
+    posicionConMasFichas : trJugadaBot;
     sePuedeJugar:boolean;
-    //mJugadaBot:tmJugadaBot;
+    mJugadaBot:tmJugadaBot;
     
 BEGIN
 	cargarVector(vectorDireccion);
 	inicializarTablero(tablero);
+	dibujarTablero(tablero);
 	
 	juegoTerminado:=false;
 
 	while not(juegoTerminado) do
 	begin
-		dibujarTablero(tablero);
 		ingresarFicha(posicionX, posicionY, FICHA_JUGADOR);
 		sePuedeJugar:= verificar_jugada(vectorDireccion, tablero, posicionX, posicionY, FICHA_JUGADOR, FICHA_BOT);
+		
 		if(sePuedeJugar)then
 			invertir_fichas(tablero, vectorDireccion, FICHA_JUGADOR, FICHA_BOT, posicionX, posicionY);
-			
+		dibujarTablero(tablero);
+		
+		resetearJugadaBot(mJugadaBot);
+		cargarJugadaBot(tablero, vectorDireccion, mJugadaBot);
+		
+		posicionConMasFichas:= botGloton(mJugadaBot);
+		if(posicionConMasFichas.fichas = 0) then
+		begin
+			writeln('nigga');
+		end
+		else
+		begin
+			invertir_fichas(tablero, vectorDireccion, FICHA_BOT, FICHA_JUGADOR, posicionConMasFichas.posX, posicionConMasFichas.posY);
+			writeln('Jugada del bot:');
+		end;
+		
+		dibujarTablero(tablero);
 	end;
+	
+	contarFichas(tablero);
 END.
