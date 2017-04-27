@@ -167,28 +167,33 @@ begin
     sePuedeJugar:=jugada;
 end;
 
+(*---------------------invertirFila-------------------------*)
+procedure invertir_fila (var tablero:tTablero; var vectorDireccion:tDireccion; 
+ fichaAliada,fichaContraria:char; posicionX,posicionY, i:byte);
+begin
+	posicionX:=posicionX + vectorDireccion[i].direccionX;
+	posicionY:=posicionY + vectorDireccion[i].direccionY;
+	while (tablero[posicionX,posicionY] = fichaContraria) do
+	begin
+		tablero[posicionX,posicionY]:= fichaAliada;
+		posicionX:=posicionX + vectorDireccion[i].direccionX;
+		posicionY:=posicionY + vectorDireccion[i].direccionY;
+	end;
+end;
+
 (*----------------------invertirFichas------------------------*)
 
 procedure invertir_fichas (var tablero:tTablero; var vectorDireccion:tDireccion; 
- fichaAliada,fichaContraria:char; posicionX:byte; posicionY:byte);
+ fichaAliada,fichaContraria:char; posicionX,posicionY:byte);
 	var i:byte;
-		sigo:boolean;
 begin
 	tablero[posicionX,posicionY]:= fichaAliada;
-	sigo:=true;
+
 	for i:=1 to dimension-1 do
 	begin
 		if (vectorDireccion[i].direccionvalida) then
 		begin
-			while (sigo) do
-			begin
-				posicionX:=posicionX + vectorDireccion[i].direccionX;
-				posicionY:=posicionY + vectorDireccion[i].direccionY;
-				if (tablero[posicionX,posicionY] = fichaContraria) then
-					tablero[posicionX,posicionY]:= fichaAliada;
-				else
-					sigo:=false;
-			end;
+			invertir_fila(tablero, vectorDireccion, fichaAliada, fichaContraria, posicionX, posicionY, i);
 		end;
 	end;
 end;
@@ -286,6 +291,15 @@ begin
 
 end;
 
+(*-------------------ingresarFichaUsuario----------------------------*)
+
+procedure ingresarFichaUsuario(tablero:tTablero; vectorDireccion:tDireccion; var posicionX:byte; var posicionY:byte; FICHA_JUGADOR,FICHA_BOT:char);
+begin
+	repeat
+		ingresarFicha(posicionX, posicionY, FICHA_JUGADOR);
+	until ( verificarValido(tablero, vectorDireccion, posicionX, posicionY, FICHA_JUGADOR, FICHA_BOT) );
+end;
+
 (*-----------------------Contar fichas-------------------------------*)
 
 procedure contarFichas(var tablero:tTablero);
@@ -346,7 +360,6 @@ var tablero:tTablero;
     contInv:byte;
     
 BEGIN
-	cargarVector(vectorDireccion);
 	inicializarTablero(tablero);
 	dibujarTablero(tablero);
 	
@@ -358,6 +371,9 @@ BEGIN
 		cargarVector(vectorDireccion);
 		if( continuarJuego(tablero, vectorDireccion, contInv, juegoTerminado, FICHA_JUGADOR, FICHA_BOT) ) then
 		begin
+			
+			//ingresarFichaUsuario(tablero, vectorDireccion, posicionX, posicionY, FICHA_JUGADOR, FICHA_BOT);
+			//invertir_fichas(tablero, vectorDireccion, FICHA_JUGADOR, FICHA_BOT, posicionX, posicionY);
 			ingresarFicha(posicionX, posicionY, FICHA_JUGADOR);
 			
 			if( verificarValido(tablero, vectorDireccion, posicionX, posicionY, FICHA_JUGADOR, FICHA_BOT) )then
@@ -369,7 +385,7 @@ BEGIN
 				until ( verificarValido(tablero, vectorDireccion, posicionX, posicionY, FICHA_JUGADOR, FICHA_BOT) );
 				invertir_fichas(tablero, vectorDireccion, FICHA_JUGADOR, FICHA_BOT, posicionX, posicionY);
 			end;
-			dibujarTablero(tablero);
+			dibujarTablero(tablero)
 		end
 		else
 			writeln('Al jugador no le es posible ingresar fichas este turno');
