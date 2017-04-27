@@ -147,6 +147,43 @@ begin
 	end;
 end;
 
+(*------------------------------------------sePuedeJugar---------------------------------------*)
+function sePuedeJugar (var tablero:tTablero):boolean;
+  var i,j:byte;
+      jugada:boolean;
+begin
+  i:=1;
+  j:=1;
+  jugada:=false;
+  
+  while (i<=dimension-1) and (jugada=false) do
+    begin 
+      while (j<=dimension-1) and (jugada=false) do
+      begin
+        if (verificar_jugada(vectorDireccion,tablero,i,j,FICHA_JUGADOR,FICHA_BOT)) then
+          jugada:=true;
+        j:=j+1;
+      end;
+      i:=i+1;
+    end;
+    sePuedeJugar:=jugada;
+end;
+
+(*-----------------------------------------continuarJuego------------------------------------*)
+procedure continuarJuego(var tablero:tTablero; var contInv:byte; var juegoTerminado:boolean);
+begin
+  if (sePuedeJugar(tablero)=false) then
+      begin
+         contInv:= contInv+1;
+	 writeln('No hay jugadas posibles en este turno');
+      end
+  else
+     contInv:=0;
+  if (contInv=2) then
+    juegoTerminado:=True;
+end;
+
+
 (*----------------------invertirFichas------------------------*)
 
 procedure invertir_fichas (var tablero:tTablero; var vectorDireccion:tDireccion; fichaAliada:char;
@@ -302,25 +339,29 @@ var tablero:tTablero;
     posicionX, posicionY: byte;
     vectorDireccion: tDireccion;
     posicionConMasFichas : trJugadaBot;
-    sePuedeJugar:boolean;
+    jugada:boolean;
     mJugadaBot:tmJugadaBot;
+    contInv:byte;
     
 BEGIN
 	cargarVector(vectorDireccion);
 	inicializarTablero(tablero);
 	dibujarTablero(tablero);
 	
+	contInv:=0;
 	juegoTerminado:=false;
 
 	while not(juegoTerminado) do
 	begin
+		continuarJuego(tablero, contInv, juegoTerminado);
 		ingresarFicha(posicionX, posicionY, FICHA_JUGADOR);
-		sePuedeJugar:= verificar_jugada(vectorDireccion, tablero, posicionX, posicionY, FICHA_JUGADOR, FICHA_BOT);
+		jugada:= verificar_jugada(vectorDireccion, tablero, posicionX, posicionY, FICHA_JUGADOR, FICHA_BOT);
 		
-		if(sePuedeJugar)then
+		if(jugada)then
 			invertir_fichas(tablero, vectorDireccion, FICHA_JUGADOR, FICHA_BOT, posicionX, posicionY);
 		dibujarTablero(tablero);
 		
+		continuarJuego(tablero, contInv, juegoTerminado);
 		resetearJugadaBot(mJugadaBot);
 		cargarJugadaBot(tablero, vectorDireccion, mJugadaBot);
 		
