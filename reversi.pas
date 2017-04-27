@@ -185,7 +185,7 @@ begin
 				posicionX:=posicionX + vectorDireccion[i].direccionX;
 				posicionY:=posicionY + vectorDireccion[i].direccionY;
 				if (tablero[posicionX,posicionY] = fichaContraria) then
-					tablero[posicionX,posicionY]:= fichaAliada
+					tablero[posicionX,posicionY]:= fichaAliada;
 				else
 					sigo:=false;
 			end;
