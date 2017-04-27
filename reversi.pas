@@ -65,20 +65,20 @@ procedure cargarVector (var vectorDireccion:tDireccion);
 	var i:byte;
 	
 begin
-	vectorDireccion[1].direccionX:= 1; // derecha
-	vectorDireccion[1].direccionY:= 0;  // derecha
-	vectorDireccion[2].direccionX:= -1;  // izquierda
-	vectorDireccion[2].direccionY:= 0;  // izquierda
-	vectorDireccion[3].direccionX:= 0;  // arriba
-	vectorDireccion[3].direccionY:= 1;  // arriba
-	vectorDireccion[4].direccionX:= 0;  // abajo
-	vectorDireccion[4].direccionY:= -1;  // abajo
+	vectorDireccion[1].direccionX:= 0; // derecha
+	vectorDireccion[1].direccionY:= 1;  // derecha
+	vectorDireccion[2].direccionX:= 0;  // izquierda
+	vectorDireccion[2].direccionY:= -1;  // izquierda
+	vectorDireccion[3].direccionX:= 1;  // arriba
+	vectorDireccion[3].direccionY:= 0;  // arriba
+	vectorDireccion[4].direccionX:= -1;  // abajo
+	vectorDireccion[4].direccionY:= 0;  // abajo
 	vectorDireccion[5].direccionX:= 1;  // diagonal superior derecha
 	vectorDireccion[5].direccionY:= 1;  // diagonal superior derecha
-	vectorDireccion[6].direccionX:= 1;  // diagonal inferior derecha
-	vectorDireccion[6].direccionY:= -1;  // diagonal inferior derecha
-	vectorDireccion[7].direccionX:= -1;  // diagonal superior izquierda
-	vectorDireccion[7].direccionY:= 1;  // diagonal superior izquierda
+	vectorDireccion[6].direccionX:= -1;  // diagonal inferior derecha
+	vectorDireccion[6].direccionY:= 1;  // diagonal inferior derecha
+	vectorDireccion[7].direccionX:= 1;  // diagonal superior izquierda
+	vectorDireccion[7].direccionY:= -1;  // diagonal superior izquierda
 	vectorDireccion[8].direccionX:= -1;  // diagonal inferior izquierda
 	vectorDireccion[8].direccionY:= -1;  // diagonal inferior izquierda
 		
@@ -90,65 +90,63 @@ begin
 			
 end;
 
-(*-----------------------------verificar_jugada_usuario-------------------------*)
+(*----------------------verificar_direccion-------------------*)
 
-function verificar_jugada(var vectorDireccion:tDireccion; tablero:tTablero; posicionX:byte; posicionY:byte;
- fichaAliada:char; fichaContraria:char):boolean;
-	var i:byte;
-		contador_fichas_invertidas:byte;
-		seguirContando:boolean;
-		contador_direcciones_validas:byte;
-begin 
-	contador_fichas_invertidas:= 0;
-	seguirContando:= true;
-	contador_direcciones_validas:= 0;
+function verificarDireccion(var tablero:tTablero; var vectorDireccion:tDireccion;
+ posicionX,posicionY:byte; fichaAliada,fichaContraria:char; i:byte):boolean;
+	var fichasComidas:byte;
+begin
+	fichasComidas:=0;
 	
-	if not (tablero[posicionX,posicionY] = ESPACIO_EN_BLANCO) then //pregunta si el espacio no esta en blanco
-		verificar_jugada:=false
-	else 
-	begin//en caso de estarlo
-		for i:=1 to dimension-1 do//este for va a recorrer el vector direccion que tiene todas las direcciones
-		begin
-			posicionX:=posicionX + vectorDireccion[i].direccionX; //va a saltar a la siguiente posicion de la direccion
-			posicionY:=posicionY + vectorDireccion[i].direccionY;
-			
-			if (tablero[posicionX,posicionY]=fichaContraria) then //pregunta si es contraria para poder seguir
-			begin
-				contador_fichas_invertidas:=contador_fichas_invertidas+1; //este valor se va a usar cuando se encuentre con una ficha aliada
-				
-				while (posicionX>=1) and (posicionX<=dimension-1) and (posicionY>=1) and (posicionY<=dimension-1)
-				 and (seguirContando) do //entra en un loop que no se salga de la tabla y hace uso del booleano para parar tmb
-				begin
-					posicionX:=posicionX + vectorDireccion[i].direccionX;//pasa a la siguien posicion de la direccion
-					posicionY:=posicionY + vectorDireccion[i].direccionY;
-					
-					if (tablero[posicionX,posicionY] = fichaContraria) then //si tiene una ficha contraria, suma 1 al contador
-						contador_fichas_invertidas:=contador_fichas_invertidas+1
-					else if (tablero[posicionX,posicionY]=fichaAliada) then
-					begin//si tiene una ficha aliada, agrega el contador al registro y termina con el proceso
-						vectorDireccion[i].direccionvalida:=true;
-						vectorDireccion[i].fichasADarVuelta:=contador_fichas_invertidas;//aca tenes el valor que te dije lo agrega al registro
-						contador_direcciones_validas:= contador_direcciones_validas + 1;//este valor se va a usar despues de salir del for
-						seguirContando:=false; //termino con el loop
-					end
-					else if tablero[posicionX,posicionY]=ESPACIO_EN_BLANCO then//si el espacio esta en blanco, va a terminar con el loop
-						seguirContando:=false;
-				end;//fin del while
-				
-			end;
-		end;//fin del for
+	while (tablero[posicionX,posicionY]= ESPACIO_EN_BLANCO)
+	 and (tablero[posicionX+vectorDireccion[i].direccionX , posicionY+vectorDireccion[i].direccionY] = fichaContraria)
+	 and (not vectorDireccion[i].direccionValida) do
+	begin
+		fichasComidas:= fichasComidas+1;
+		posicionX:= posicionX + vectorDireccion[i].direccionX;
+		posicionY:= posicionY + vectorDireccion[i].direccionY;
 		
-		if (contador_direcciones_validas = 0) then
-		begin//este if va a ser quien devuelva el valor de la funcion en base si hubo alguna direccion valida en el for
-			verificar_jugada:=false;
-		end
-		else 
-			verificar_jugada:=true;
+		while (tablero[posicionX, posicionY]<>ESPACIO_EN_BLANCO) and (not vectorDireccion[i].direccionValida) do
+		begin
+			if (tablero[posicionX, posicionY]=fichaContraria) then
+			begin
+				fichasComidas:= fichasComidas+1;
+				posicionX:= posicionX + vectorDireccion[i].direccionX;
+				posicionY:= posicionY + vectorDireccion[i].direccionY;
+			end
+			else if(tablero[posicionX, posicionY]=fichaAliada) then
+			begin
+				vectorDireccion[i].direccionValida:= true;
+				vectorDireccion[i].fichasADarVuelta:= fichasComidas;
+			end;
+		end;//segundo while
+			
+	end;//primer while
+	
+	verificarDireccion:= vectorDireccion[i].direccionValida;
+end;
+
+(*------------------------------verificarValido-----------------------*)
+
+function verificarValido(var tablero:tTablero; var vectorDireccion:tDireccion;
+ posicionX,posicionY:byte; fichaAliada,fichaContraria:char):boolean;
+	var i:byte;
+		valido:boolean;
+begin
+	valido:= false;
+	for i:=1 to dimension-1 do
+	begin
+		if( verificarDireccion(tablero, vectorDireccion, posicionX, posicionY, fichaAliada, fichaContraria, i) ) then
+		begin
+			valido:= true;
+		end;
 	end;
+	
+	verificarValido:= valido;
 end;
 
 (*------------------------------------------sePuedeJugar---------------------------------------*)
-function sePuedeJugar (var tablero:tTablero):boolean;
+function sePuedeJugar (var tablero:tTablero; vectorDireccion:tDireccion; fichaAliada, fichaContraria:char):boolean;
   var i,j:byte;
       jugada:boolean;
 begin
@@ -160,7 +158,7 @@ begin
     begin 
       while (j<=dimension-1) and (jugada=false) do
       begin
-        if (verificar_jugada(vectorDireccion,tablero,i,j,FICHA_JUGADOR,FICHA_BOT)) then
+        if ( verificarValido(tablero, vectorDireccion,i,j,fichaAliada,fichaContraria) ) then
           jugada:=true;
         j:=j+1;
       end;
@@ -169,25 +167,10 @@ begin
     sePuedeJugar:=jugada;
 end;
 
-(*-----------------------------------------continuarJuego------------------------------------*)
-procedure continuarJuego(var tablero:tTablero; var contInv:byte; var juegoTerminado:boolean);
-begin
-  if (sePuedeJugar(tablero)=false) then
-      begin
-         contInv:= contInv+1;
-	 writeln('No hay jugadas posibles en este turno');
-      end
-  else
-     contInv:=0;
-  if (contInv=2) then
-    juegoTerminado:=True;
-end;
-
-
 (*----------------------invertirFichas------------------------*)
 
-procedure invertir_fichas (var tablero:tTablero; var vectorDireccion:tDireccion; fichaAliada:char;
- fichaContraria:char; posicionX:byte; posicionY:byte);
+procedure invertir_fichas (var tablero:tTablero; var vectorDireccion:tDireccion; 
+ fichaAliada,fichaContraria:char; posicionX:byte; posicionY:byte);
 	var i:byte;
 		sigo:boolean;
 begin
@@ -219,7 +202,7 @@ var i,j,k:byte;
     begin
 		for j:=1 to dimension-1 do
         begin
-			if ( verificar_jugada(vectorDireccion,tablero,i,j,FICHA_BOT,FICHA_JUGADOR) )then
+			if ( verificarValido(tablero, vectorDireccion,i,j,FICHA_BOT,FICHA_JUGADOR) )then
 			begin
 				mJugadaBot[i,j].posX:=i;
 				mJugadaBot[i,j].posY:=j;
@@ -330,7 +313,27 @@ begin
 		writeln('Empate');
 end;
 
-
+(*-----------------------------------------continuarJuego------------------------------------*)
+function continuarJuego(var tablero:tTablero; vectorDireccion:tDireccion; var contInv:byte;var juegoTerminado:boolean; 
+ fichaAliada, fichaContraria:char):boolean;
+	var resultado:boolean;
+begin
+	if not (sePuedeJugar(tablero, vectorDireccion, fichaAliada, fichaContraria)=false) then
+	begin
+		contInv:= contInv+1;
+		resultado:= false;
+	end
+	else
+	begin
+		contInv:=0;
+		resultado:= true;
+	end;
+	
+	if (contInv=2) then
+		juegoTerminado:=True;
+	
+	continuarJuego:=resultado;
+end;
 
 (*---------------------Juego--------------------------------------*)
 
@@ -339,7 +342,6 @@ var tablero:tTablero;
     posicionX, posicionY: byte;
     vectorDireccion: tDireccion;
     posicionConMasFichas : trJugadaBot;
-    jugada:boolean;
     mJugadaBot:tmJugadaBot;
     contInv:byte;
     
@@ -353,30 +355,40 @@ BEGIN
 
 	while not(juegoTerminado) do
 	begin
-		continuarJuego(tablero, contInv, juegoTerminado);
-		ingresarFicha(posicionX, posicionY, FICHA_JUGADOR);
-		jugada:= verificar_jugada(vectorDireccion, tablero, posicionX, posicionY, FICHA_JUGADOR, FICHA_BOT);
-		
-		if(jugada)then
-			invertir_fichas(tablero, vectorDireccion, FICHA_JUGADOR, FICHA_BOT, posicionX, posicionY);
-		dibujarTablero(tablero);
-		
-		continuarJuego(tablero, contInv, juegoTerminado);
-		resetearJugadaBot(mJugadaBot);
-		cargarJugadaBot(tablero, vectorDireccion, mJugadaBot);
-		
-		posicionConMasFichas:= botGloton(mJugadaBot);
-		if(posicionConMasFichas.fichas = 0) then
+		cargarVector(vectorDireccion);
+		if( continuarJuego(tablero, vectorDireccion, contInv, juegoTerminado, FICHA_JUGADOR, FICHA_BOT) ) then
 		begin
-			writeln('nigga');
+			ingresarFicha(posicionX, posicionY, FICHA_JUGADOR);
+			
+			if( verificarValido(tablero, vectorDireccion, posicionX, posicionY, FICHA_JUGADOR, FICHA_BOT) )then
+				invertir_fichas(tablero, vectorDireccion, FICHA_JUGADOR, FICHA_BOT, posicionX, posicionY)
+			else
+			begin
+				repeat
+					ingresarFicha(posicionX, posicionY, FICHA_JUGADOR);
+				until ( verificarValido(tablero, vectorDireccion, posicionX, posicionY, FICHA_JUGADOR, FICHA_BOT) );
+				invertir_fichas(tablero, vectorDireccion, FICHA_JUGADOR, FICHA_BOT, posicionX, posicionY);
+			end;
+			dibujarTablero(tablero);
 		end
 		else
-		begin
-			invertir_fichas(tablero, vectorDireccion, FICHA_BOT, FICHA_JUGADOR, posicionConMasFichas.posX, posicionConMasFichas.posY);
-			writeln('Jugada del bot:');
-		end;
+			writeln('Al jugador no le es posible ingresar fichas este turno');
 		
-		dibujarTablero(tablero);
+		
+		cargarVector(vectorDireccion);
+		if( continuarJuego(tablero, vectorDireccion, contInv, juegoTerminado, FICHA_BOT, FICHA_JUGADOR)) then
+		begin
+			resetearJugadaBot(mJugadaBot);
+			cargarJugadaBot(tablero, vectorDireccion, mJugadaBot);
+			posicionConMasFichas:= botGloton(mJugadaBot);
+			invertir_fichas(tablero, vectorDireccion, FICHA_BOT, FICHA_JUGADOR, posicionConMasFichas.posX, posicionConMasFichas.posY);
+			writeln('Jugada del bot: ', posicionConMasFichas.posY, '', posicionConMasFichas.posX);
+			
+			dibujarTablero(tablero);
+		end
+		else
+			writeln('Al bot no le es posible ingresar fichas este turno');
+		
 	end;
 	
 	contarFichas(tablero);
