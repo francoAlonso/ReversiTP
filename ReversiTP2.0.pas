@@ -69,7 +69,7 @@ function verificarValido():boolean;
 begin
      verificarValido:=true;
 end;
-
+(*------------------------------------------sePuedeJugar---------------------------------------*)
 function sePuedeJugar (var tablero:tTablero):boolean;
   var i,j:byte;
       jugada:boolean;
@@ -90,7 +90,7 @@ begin
     end;
     sePuedeJugar:=jugada;
 end;
-
+(*-----------------------------------------continuarJuego------------------------------------*)
 procedure continuarJuego(var tablero:tTablero; var contInv:byte; var juegoTerminado:boolean);
 begin
   if (sePuedeJugar(tablero)=false) then
