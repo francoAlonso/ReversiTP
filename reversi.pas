@@ -19,12 +19,12 @@ type
 		fichasADarVuelta:byte;
 	end;
 	tDireccion = array[1..dimension-1] of trDatos;
-	trJugadaBot=record
+	trJugadaBot = record
 		posX:byte;
 		posY:byte;
 		fichas:byte;
 	end;
-	tmJugadaBot=array[1..dimension-1,1..dimension-1] of trJugadaBot;
+	tmJugadaBot = array[1..dimension-1,1..dimension-1] of trJugadaBot;
 	
 (*-----------------Inicializar Tablero-----------------------*)	
 
@@ -55,9 +55,8 @@ begin
              end;
       tablero[4,4]:=FICHA_JUGADOR;
       tablero[4,5]:=FICHA_BOT;
-      tablero[5,4]:=FICHA_JUGADOR;
-      tablero[5,5]:=FICHA_BOT;
-      tablero[6,5]:=FICHA_JUGADOR;
+      tablero[5,4]:=FICHA_BOT;
+      tablero[5,5]:=FICHA_JUGADOR;
 end;
 
 (*-------------------CargarVector-----------------------*)
@@ -148,6 +147,32 @@ begin
 	end;
 end;
 
+(*----------------------invertirFichas------------------------*)
+
+procedure invertir_fichas (var tablero:tTablero; var vectorDireccion:tDireccion; fichaAliada:char;
+ fichaContraria:char; posicionX:byte; posicionY:byte);
+	var i:byte;
+		sigo:boolean;
+begin
+	tablero[posicionX,posicionY]:= fichaAliada;
+	sigo:=true;
+	for i:=1 to dimension-1 do
+	begin
+		if (vectorDireccion[i].direccionvalida) then
+		begin
+			while (sigo) do
+			begin
+				posicionX:=posicionX + vectorDireccion[i].direccionX;
+				posicionY:=posicionY + vectorDireccion[i].direccionY;
+				if (tablero[posicionX,posicionY] = fichaContraria) then
+					tablero[posicionX,posicionY]:= fichaAliada
+				else
+					sigo:=false;
+			end;
+		end;
+	end;
+end;
+
 (*------------------------cargarJugadaBot----------------------*)
 
 procedure cargarJugadaBot (var tablero:tTablero; var vectorDireccion:tDireccion;var mJugadaBot:tmJugadaBot);
@@ -162,7 +187,7 @@ var i,j,k:byte;
 				mJugadaBot[i,j].posX:=i;
 				mJugadaBot[i,j].posY:=j;
 				for k:=1 to dimension-1 do
-					mJugadaBot[i,j].fichas:= mJugadaBot[i,j].fichas+vectorDireccion[i].fichasADarVuelta;
+					mJugadaBot[i,j].fichas:= mJugadaBot[i,j].fichas + vectorDireccion[i].fichasADarVuelta;
 				
 			end;
         end;
@@ -218,14 +243,14 @@ begin
      for i:=0 to dimension do
          begin
          for n:=0 to dimension do
-             write(tablero[i,n], ESPACIO_EN_BLANCO);
+             write(tablero[i,n], ' ');
          writeln();
          end;
 end;
 
 (*----------------------Ingresar Ficha-----------------------*)
 
-procedure ingresarFicha(var tablero:tTablero; var posicionX:byte; var posicionY:byte; letra:char);
+procedure ingresarFicha(var posicionX:byte; var posicionY:byte; letra:char);
 	var input:string[2];
 		code:byte;(*Variable para que funcione Val() unicamente*)
 begin
@@ -276,15 +301,23 @@ var tablero:tTablero;
     juegoTerminado:boolean;
     posicionX, posicionY: byte;
     vectorDireccion: tDireccion;
+    //posicionConMasFichas : trJugadaBot;
+    sePuedeJugar:boolean;
+    //mJugadaBot:tmJugadaBot;
     
 BEGIN
 	cargarVector(vectorDireccion);
-	juegoTerminado:=false;
 	inicializarTablero(tablero);
+	
+	juegoTerminado:=false;
 
 	while not(juegoTerminado) do
 	begin
-       dibujarTablero(tablero);
-       ingresarFicha(tablero, posicionX, posicionY, FICHA_JUGADOR);
+		dibujarTablero(tablero);
+		ingresarFicha(posicionX, posicionY, FICHA_JUGADOR);
+		sePuedeJugar:= verificar_jugada(vectorDireccion, tablero, posicionX, posicionY, FICHA_JUGADOR, FICHA_BOT);
+		if(sePuedeJugar)then
+			invertir_fichas(tablero, vectorDireccion, FICHA_JUGADOR, FICHA_BOT, posicionX, posicionY);
+			
 	end;
 END.
