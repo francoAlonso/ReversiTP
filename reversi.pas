@@ -258,7 +258,7 @@ begin
      posicionY:=0;
      
      repeat
-          write('Ingrese valores entre 1 a ', dimension-1, 'para cada digito: ');
+          write('Ingrese valores entre 1 a ', dimension-1, ' para cada digito: ');
           readln(input);
           Val(input[1], posicionY, code);
           Val(input[2], posicionX, code);
