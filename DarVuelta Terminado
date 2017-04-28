@@ -1,3 +1,4 @@
+(*----------------------------------DarVuelta--------------------------------------------------------*)
 procedure DarVuelta (var tablero:tTablero; VerificarValido:boolean; VectorDireccion:tDireccion;
   posicionX,posicionY:byte);
 var i:byte;
