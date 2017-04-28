@@ -1,0 +1,22 @@
+procedure DarVuelta (var tablero:tTablero; VerificarValido:boolean; VectorDireccion:tDireccion;
+  posicionX,posicionY:byte);
+var i:byte;
+  posX, posY:byte;
+begin
+  while (i<=dimension-1) and (vectorDireccion[i].direccionValida=true) do
+  begin
+   posicionX:= posicionX + vectorDireccion[i].direccionX;
+   posicionY:= posicionY + vectorDireccion[i].direccionY;
+   if(tablero[posicionX, posicionY]=FICHA_BOT) then
+    begin
+     while (tablero[posicionX, posicionY]=FICHA_BOT) do
+      begin
+         posX:= posicionX;   // use posX y posY para evitar que se mezcle con la posicionX e posicionY anteriores
+         posY:= posicionY;
+      tablero[posX, posY]:=FICHA_JUGADOR;
+         posX:= posX + vectorDireccion[i].direccionX;
+         posY:= posY + vectorDireccion[i].direccionY;
+         end;
+     end;
+   i:=i+1;
+end;  
