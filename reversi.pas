@@ -106,7 +106,7 @@ begin
 		posicionX:= posicionX + vectorDireccion[i].direccionX;
 		posicionY:= posicionY + vectorDireccion[i].direccionY;
 		
-		while (tablero[posicionX, posicionY]<>ESPACIO_EN_BLANCO) and (not vectorDireccion[i].direccionValida) do
+		while (tablero[posicionX, posicionY]<>ESPACIO_EN_BLANCO) and ((tablero[posicionX, posicionY]='B') or (tablero[posicionX, posicionY]='N')) and (not vectorDireccion[i].direccionValida) do
 		begin
 			if (tablero[posicionX, posicionY]=fichaContraria) then
 			begin
