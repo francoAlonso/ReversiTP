@@ -6,8 +6,8 @@ uses crt;
 
 const 
 	dimension = 9;
-	FICHA_JUGADOR = 'N';
-	FICHA_BOT = 'B';
+	FICHA_NEGRA = 'N';
+	FICHA_BLANCA = 'B';
 	ESPACIO_EN_BLANCO = '_';
 	CANTIDAD_DIRECCIONES = 8;
 	
@@ -54,10 +54,10 @@ begin
                   else
                       tablero[i,n]:=ESPACIO_EN_BLANCO;
              end;
-      tablero[4,4]:=FICHA_JUGADOR;
-      tablero[4,5]:=FICHA_BOT;
-      tablero[5,4]:=FICHA_BOT;
-      tablero[5,5]:=FICHA_JUGADOR;
+      tablero[4,4]:=FICHA_NEGRA;
+      tablero[4,5]:=FICHA_BLANCA;
+      tablero[5,4]:=FICHA_BLANCA;
+      tablero[5,5]:=FICHA_NEGRA;
 end;
 
 (*-------------------CargarVectorDireccion-----------------------*)
@@ -107,7 +107,8 @@ begin
 		posicionX:= posicionX + vectorDireccion[direccion].direccionX;
 		posicionY:= posicionY + vectorDireccion[direccion].direccionY;
 		
-		while ((tablero[posicionX, posicionY]='B') or (tablero[posicionX, posicionY]='N')) and (not vectorDireccion[direccion].direccionValida) do
+		while ((tablero[posicionX, posicionY]=FICHA_BLANCA) or (tablero[posicionX, posicionY]=FICHA_NEGRA)) 
+		 and (not vectorDireccion[direccion].direccionValida) do
 		begin
 			if (tablero[posicionX, posicionY]=fichaContraria) then
 			begin
@@ -115,7 +116,7 @@ begin
 				posicionX:= posicionX + vectorDireccion[direccion].direccionX;
 				posicionY:= posicionY + vectorDireccion[direccion].direccionY;
 			end
-			else if(tablero[posicionX, posicionY]=fichaAliada) then
+			else
 			begin
 				vectorDireccion[direccion].direccionValida:= true;
 				vectorDireccion[direccion].fichasADarVuelta:= fichasComidas;
@@ -202,14 +203,14 @@ end;
 
 (*------------------------cargarJugadaBot----------------------*)
 //le asignara al array del bot que casillas va a poder ingresar y cuantas a comer
-procedure cargarJugadaBot (var tablero:tTablero; var vectorDireccion:tDireccion;var mJugadaBot:tmJugadaBot);
+procedure cargarJugadaBot (var tablero:tTablero; var vectorDireccion:tDireccion;var mJugadaBot:tmJugadaBot; fichaBot,fichaJugador:char);
 var i,j,k:byte;
   begin
     for i:=1 to dimension-1 do
     begin
 		for j:=1 to dimension-1 do
         begin
-			if ( verificarCasillaValida(tablero, vectorDireccion,i,j,FICHA_BOT,FICHA_JUGADOR) )then
+			if ( verificarCasillaValida(tablero, vectorDireccion,i,j,fichaBot,fichaJugador) )then
 			begin
 				mJugadaBot[i,j].posX:=i;
 				mJugadaBot[i,j].posY:=j;
@@ -278,7 +279,7 @@ end;
 
 (*----------------------Ingresar Ficha-----------------------*)
 //el usuario va a tener que ingresar dos valores entre 1 a 8
-procedure ingresarFicha(var posicionX:byte; var posicionY:byte; letra:char);
+procedure ingresarFicha(var tablero:tTablero; var vectorDireccion:tDireccion; var posicionX:byte; var posicionY:byte; fichaJugador, fichaBot:char);
 	var input:string[2];
 		code:byte;(*Variable para que funcione Val() unicamente*)
 begin
@@ -287,7 +288,8 @@ begin
      Val(input[1], posicionY, code);
      Val(input[2], posicionX, code);
      
-     while( (posicionX<1) and (posicionX>dimension-1) and (posicionY<1) and (posicionY>dimension-1) and (code=0) ) do
+     while( (posicionX<1) or (posicionX>dimension-1) or (posicionY<1) or (posicionY>dimension-1) or
+      not verificarCasillaValida(tablero, vectorDireccion, posicionX, posicionY, fichaJugador, fichaBot) and (code=0) ) do
      begin
           write('Posicion invalida, pruebe nuevamente: ');
           readln(input);
@@ -299,7 +301,7 @@ end;
 
 (*-----------------------Contar fichas-------------------------------*)
 //va a contar solo las fichas N y B
-procedure contarFichas(var tablero:tTablero);
+procedure contarFichas(var tablero:tTablero; fichaJugador,fichaBot:char);
 var i,n, negras, blancas:byte;
 begin
      negras:=0;
@@ -307,9 +309,9 @@ begin
      for i:=1 to dimension-1 do
          for n:=1 to dimension-1 do
          begin
-              if( tablero[i,n] = FICHA_BOT) then
+              if( tablero[i,n] = fichaBot) then
                   blancas := blancas + 1;
-              if( tablero[i,n] = FICHA_JUGADOR) then
+              if( tablero[i,n] = fichaJugador) then
                   negras := negras + 1;
          end;
      if(blancas>negras)then
@@ -329,7 +331,7 @@ function continuarJuego(var tablero:tTablero; vectorDireccion:tDireccion; var co
  fichaAliada, fichaContraria:char):boolean;
 	var resultado:boolean;
 begin
-	if not (sePuedeJugar(tablero, vectorDireccion, fichaAliada, fichaContraria)=false) then
+	if( sePuedeJugar(tablero, vectorDireccion, fichaAliada, fichaContraria) ) then
 	begin
 		contInv:= contInv+1;
 		resultado:= false;
@@ -346,6 +348,14 @@ begin
 	continuarJuego:=resultado;
 end;
 
+procedure verificarColorValido(var color:char);
+begin
+	repeat
+		write('Elija el color de su ficha, N o B? ');
+		readln(color);
+	until (color='n') or (color='b');
+end;
+
 (*---------------------Juego--------------------------------------*)
 
 var tablero:tTablero;
@@ -355,6 +365,7 @@ var tablero:tTablero;
     posicionConMasFichas : trJugadaBot;
     mJugadaBot:tmJugadaBot;
     contInv:byte;
+    fichaJugador, fichaBot, fichaIngresadaPorUsuario: char;
     
 BEGIN
 	inicializarTablero(tablero);
@@ -362,17 +373,36 @@ BEGIN
 	
 	contInv:=0;
 	juegoTerminado:=false;
+	
+	verificarColorValido(fichaIngresadaPorUsuario);
+	
+	if (fichaIngresadaPorUsuario = 'b') then
+	begin
+		fichaJugador:= FICHA_BLANCA;
+		fichaBot:= FICHA_NEGRA;
+		
+		cargarJugadaBot(tablero, vectorDireccion, mJugadaBot, fichaBot, fichaJugador);
+		posicionConMasFichas:= botGloton(mJugadaBot);
+		invertir_fichas(tablero, vectorDireccion, fichaBot, fichaJugador, posicionConMasFichas.posX, posicionConMasFichas.posY);
+		ClrScr();
+		dibujarTablero(tablero);
+		writeln('Jugada del bot: ', posicionConMasFichas.posY, '', posicionConMasFichas.posX);
+	end
+	else
+	begin
+		fichaJugador:= FICHA_NEGRA;
+		fichaBot:= FICHA_BLANCA;
+	end;
 
 	while not(juegoTerminado) do
 	begin
 		cargarVectorDireccion(vectorDireccion);
 		
-		if( continuarJuego(tablero, vectorDireccion, contInv, juegoTerminado, FICHA_JUGADOR, FICHA_BOT) ) then
+		if( continuarJuego(tablero, vectorDireccion, contInv, juegoTerminado, fichaJugador, fichaBot) ) then
 		begin	
-			repeat
-				ingresarFicha(posicionX, posicionY, FICHA_JUGADOR);
-			until ( verificarCasillaValida(tablero, vectorDireccion, posicionX, posicionY, FICHA_JUGADOR, FICHA_BOT) );
-			invertir_fichas(tablero, vectorDireccion, FICHA_JUGADOR, FICHA_BOT, posicionX, posicionY);
+			ingresarFicha(tablero, vectorDireccion, posicionX, posicionY, fichaJugador, fichaBot);
+
+			invertir_fichas(tablero, vectorDireccion, fichaJugador, fichaBot, posicionX, posicionY);
 		end
 		else
 			writeln('Al jugador no le es posible ingresar fichas este turno');
@@ -380,12 +410,12 @@ BEGIN
 		
 		cargarVectorDireccion(vectorDireccion);
 		
-		if( continuarJuego(tablero, vectorDireccion, contInv, juegoTerminado, FICHA_BOT, FICHA_JUGADOR)) then
+		if( continuarJuego(tablero, vectorDireccion, contInv, juegoTerminado, fichaBot, fichaJugador)) then
 		begin
 			resetearJugadaBot(mJugadaBot);
-			cargarJugadaBot(tablero, vectorDireccion, mJugadaBot);
+			cargarJugadaBot(tablero, vectorDireccion, mJugadaBot, fichaBot, fichaJugador);
 			posicionConMasFichas:= botGloton(mJugadaBot);
-			invertir_fichas(tablero, vectorDireccion, FICHA_BOT, FICHA_JUGADOR, posicionConMasFichas.posX, posicionConMasFichas.posY);
+			invertir_fichas(tablero, vectorDireccion, fichaBot, fichaJugador, posicionConMasFichas.posX, posicionConMasFichas.posY);
 			ClrScr();
 			dibujarTablero(tablero);
 			writeln('Jugada del bot: ', posicionConMasFichas.posY, '', posicionConMasFichas.posX);
@@ -395,5 +425,5 @@ BEGIN
 		
 	end;
 	
-	contarFichas(tablero);
+	contarFichas(tablero, fichaJugador, fichaBot);
 END.
