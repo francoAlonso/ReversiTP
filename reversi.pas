@@ -9,16 +9,17 @@ const
 	FICHA_JUGADOR = 'N';
 	FICHA_BOT = 'B';
 	ESPACIO_EN_BLANCO = '_';
+	CANTIDAD_DIRECCIONES = 8;
 	
 type 
 	tTablero = array[0..dimension,0..dimension] of char;
-	trDatos= record
+	trDireccion = record
 		direccionX:shortInt;
 		direccionY:shortInt;
 		direccionValida:boolean;
 		fichasADarVuelta:byte;
 	end;
-	tDireccion = array[1..dimension-1] of trDatos;
+	tDireccion = array[1..CANTIDAD_DIRECCIONES] of trDireccion;
 	trJugadaBot = record
 		posX:byte;
 		posY:byte;
@@ -27,7 +28,7 @@ type
 	tmJugadaBot = array[1..dimension-1,1..dimension-1] of trJugadaBot;
 	
 (*-----------------Inicializar Tablero-----------------------*)	
-
+//va a llenar el vector tTablero con chars una sola vez en el principio para simular un tablero.
 procedure inicializarTablero(var tablero:tTablero);
    var i,n:byte;
 begin
@@ -59,9 +60,9 @@ begin
       tablero[5,5]:=FICHA_JUGADOR;
 end;
 
-(*-------------------CargarVector-----------------------*)
-
-procedure cargarVector (var vectorDireccion:tDireccion);
+(*-------------------CargarVectorDireccion-----------------------*)
+//inicializa el array tDireccion para que le indique al programa las direcciones que se va a tomar. Tmb es usado para resetearse
+procedure cargarVectorDireccion (var vectorDireccion:tDireccion);
 	var i:byte;
 	
 begin
@@ -82,7 +83,7 @@ begin
 	vectorDireccion[8].direccionX:= -1;  // diagonal inferior izquierda
 	vectorDireccion[8].direccionY:= -1;  // diagonal inferior izquierda
 		
-	for i:=1 to dimension-1 do
+	for i:=1 to CANTIDAD_DIRECCIONES do
 	begin
 		vectorDireccion[i].direccionvalida:=false;
 		vectorDireccion[i].fichasADarVuelta:= 0;
@@ -91,58 +92,58 @@ begin
 end;
 
 (*----------------------verificar_direccion-------------------*)
-
-function verificarDireccion(var tablero:tTablero; var vectorDireccion:tDireccion;
- posicionX,posicionY:byte; fichaAliada,fichaContraria:char; i:byte):boolean;
+//va a ir en una direccion a verificar si es valida preguntando en base de B y N.
+function verificarDireccionValida(var tablero:tTablero; var vectorDireccion:tDireccion;
+ posicionX,posicionY:byte; fichaAliada,fichaContraria:char; direccion:byte):boolean;
 	var fichasComidas:byte;
 begin
 	fichasComidas:=0;
 	
 	while (tablero[posicionX,posicionY]= ESPACIO_EN_BLANCO)
-	 and (tablero[posicionX+vectorDireccion[i].direccionX , posicionY+vectorDireccion[i].direccionY] = fichaContraria)
-	 and (not vectorDireccion[i].direccionValida) do
+	 and (tablero[posicionX+vectorDireccion[direccion].direccionX , posicionY+vectorDireccion[direccion].direccionY] = fichaContraria)
+	 and (not vectorDireccion[direccion].direccionValida) do
 	begin
 		fichasComidas:= fichasComidas+1;
-		posicionX:= posicionX + vectorDireccion[i].direccionX;
-		posicionY:= posicionY + vectorDireccion[i].direccionY;
+		posicionX:= posicionX + vectorDireccion[direccion].direccionX;
+		posicionY:= posicionY + vectorDireccion[direccion].direccionY;
 		
-		while (tablero[posicionX, posicionY]<>ESPACIO_EN_BLANCO) and ((tablero[posicionX, posicionY]='B') or (tablero[posicionX, posicionY]='N')) and (not vectorDireccion[i].direccionValida) do
+		while ((tablero[posicionX, posicionY]='B') or (tablero[posicionX, posicionY]='N')) and (not vectorDireccion[direccion].direccionValida) do
 		begin
 			if (tablero[posicionX, posicionY]=fichaContraria) then
 			begin
 				fichasComidas:= fichasComidas+1;
-				posicionX:= posicionX + vectorDireccion[i].direccionX;
-				posicionY:= posicionY + vectorDireccion[i].direccionY;
+				posicionX:= posicionX + vectorDireccion[direccion].direccionX;
+				posicionY:= posicionY + vectorDireccion[direccion].direccionY;
 			end
 			else if(tablero[posicionX, posicionY]=fichaAliada) then
 			begin
-				vectorDireccion[i].direccionValida:= true;
-				vectorDireccion[i].fichasADarVuelta:= fichasComidas;
+				vectorDireccion[direccion].direccionValida:= true;
+				vectorDireccion[direccion].fichasADarVuelta:= fichasComidas;
 			end;
 		end;//segundo while
 			
 	end;//primer while
 	
-	verificarDireccion:= vectorDireccion[i].direccionValida;
+	verificarDireccionValida:= vectorDireccion[direccion].direccionValida;
 end;
 
 (*------------------------------verificarValido-----------------------*)
-
-function verificarValido(var tablero:tTablero; var vectorDireccion:tDireccion;
+//es la que devuelve si la casilla es valida o no, va a llamar a verificarDireccionValida por la cantidad de direcciones
+function verificarCasillaValida(var tablero:tTablero; var vectorDireccion:tDireccion;
  posicionX,posicionY:byte; fichaAliada,fichaContraria:char):boolean;
 	var i:byte;
 		valido:boolean;
 begin
 	valido:= false;
-	for i:=1 to dimension-1 do
+	for i:=1 to CANTIDAD_DIRECCIONES do
 	begin
-		if( verificarDireccion(tablero, vectorDireccion, posicionX, posicionY, fichaAliada, fichaContraria, i) ) then
+		if( verificarDireccionValida(tablero, vectorDireccion, posicionX, posicionY, fichaAliada, fichaContraria, i) ) then
 		begin
 			valido:= true;
 		end;
 	end;
 	
-	verificarValido:= valido;
+	verificarCasillaValida:= valido;
 end;
 
 (*------------------------------------------sePuedeJugar---------------------------------------*)
@@ -158,7 +159,7 @@ begin
     begin 
       while (j<=dimension-1) and (jugada=false) do
       begin
-        if ( verificarValido(tablero, vectorDireccion,i,j,fichaAliada,fichaContraria) ) then
+        if ( verificarCasillaValida(tablero, vectorDireccion,i,j,fichaAliada,fichaContraria) ) then
           jugada:=true;
         j:=j+1;
       end;
@@ -168,28 +169,29 @@ begin
 end;
 
 (*---------------------invertirFila-------------------------*)
+//encargado de invertir las fichas opoenentes en una sola direccion.
 procedure invertir_fila (var tablero:tTablero; var vectorDireccion:tDireccion; 
- fichaAliada,fichaContraria:char; posicionX,posicionY, i:byte);
+ fichaAliada,fichaContraria:char; posicionX,posicionY, direccion:byte);
 begin
-	posicionX:=posicionX + vectorDireccion[i].direccionX;
-	posicionY:=posicionY + vectorDireccion[i].direccionY;
+	posicionX:=posicionX + vectorDireccion[direccion].direccionX;
+	posicionY:=posicionY + vectorDireccion[direccion].direccionY;
 	while (tablero[posicionX,posicionY] = fichaContraria) do
 	begin
 		tablero[posicionX,posicionY]:= fichaAliada;
-		posicionX:=posicionX + vectorDireccion[i].direccionX;
-		posicionY:=posicionY + vectorDireccion[i].direccionY;
+		posicionX:=posicionX + vectorDireccion[direccion].direccionX;
+		posicionY:=posicionY + vectorDireccion[direccion].direccionY;
 	end;
 end;
 
 (*----------------------invertirFichas------------------------*)
-
+//si o si siendo una casilla valida, dara vuelta toda ficha del oponente. Llama a invertir_fila por la cantidad de direcciones
 procedure invertir_fichas (var tablero:tTablero; var vectorDireccion:tDireccion; 
  fichaAliada,fichaContraria:char; posicionX,posicionY:byte);
 	var i:byte;
 begin
 	tablero[posicionX,posicionY]:= fichaAliada;
 
-	for i:=1 to dimension-1 do
+	for i:=1 to CANTIDAD_DIRECCIONES do
 	begin
 		if (vectorDireccion[i].direccionvalida) then
 		begin
@@ -199,7 +201,7 @@ begin
 end;
 
 (*------------------------cargarJugadaBot----------------------*)
-
+//le asignara al array del bot que casillas va a poder ingresar y cuantas a comer
 procedure cargarJugadaBot (var tablero:tTablero; var vectorDireccion:tDireccion;var mJugadaBot:tmJugadaBot);
 var i,j,k:byte;
   begin
@@ -207,7 +209,7 @@ var i,j,k:byte;
     begin
 		for j:=1 to dimension-1 do
         begin
-			if ( verificarValido(tablero, vectorDireccion,i,j,FICHA_BOT,FICHA_JUGADOR) )then
+			if ( verificarCasillaValida(tablero, vectorDireccion,i,j,FICHA_BOT,FICHA_JUGADOR) )then
 			begin
 				mJugadaBot[i,j].posX:=i;
 				mJugadaBot[i,j].posY:=j;
@@ -220,7 +222,7 @@ var i,j,k:byte;
  end;
 
 (*------------------------ResetearJugadasBot--------------------*)
-
+//esta funcion reiniciara la posicion que tiene mayor cantidad de fichas para comer
 procedure resetearJugadaBot (var mJugadaBot : tmJugadaBot);
 var i,j:byte;
   begin
@@ -236,7 +238,7 @@ var i,j:byte;
 end;
 
 (*-----------------------botGloton--------------------*)
-
+//esta funcion elije la posicion con mayor capacidad de comer fichas enemigas
 function botGloton(var mJugadaBot : tmJugadaBot):trJugadaBot;
 	var gloton:trJugadaBot;
 		i,n:byte;
@@ -261,47 +263,42 @@ begin
 end;
 
 (*--------------------------DibujarTablero---------------------*)
-
+//imprime por pantalla el estado actual del tablero
 procedure dibujarTablero(tablero:tTablero);
     var i,n:byte;
 begin
      for i:=0 to dimension do
          begin
          for n:=0 to dimension do
-             write(tablero[i,n], ' ');
+             write(tablero[i,n], '  ');		
+         writeln();
          writeln();
          end;
 end;
 
 (*----------------------Ingresar Ficha-----------------------*)
-
+//el usuario va a tener que ingresar dos valores entre 1 a 8
 procedure ingresarFicha(var posicionX:byte; var posicionY:byte; letra:char);
 	var input:string[2];
 		code:byte;(*Variable para que funcione Val() unicamente*)
 begin
-     posicionX:=0;
-     posicionY:=0;
+     write('Ingrese las coordenadas en X e Y entre 1 a ', dimension-1, ' para cada digito: ');
+     readln(input);
+     Val(input[1], posicionY, code);
+     Val(input[2], posicionX, code);
      
-     repeat
-          write('Ingrese valores entre 1 a ', dimension-1, ' para cada digito: ');
+     while( (posicionX<1) and (posicionX>dimension-1) and (posicionY<1) and (posicionY>dimension-1) and (code=0) ) do
+     begin
+          write('Posicion invalida, pruebe nuevamente: ');
           readln(input);
           Val(input[1], posicionY, code);
           Val(input[2], posicionX, code);
-     until ( (posicionX>=1) and (posicionX<=dimension-1) and (posicionY>=1) and (posicionY<=dimension-1) and (code=0) );
+     end;
 
-end;
-
-(*-------------------ingresarFichaUsuario----------------------------*)
-
-procedure ingresarFichaUsuario(tablero:tTablero; vectorDireccion:tDireccion; var posicionX:byte; var posicionY:byte; FICHA_JUGADOR,FICHA_BOT:char);
-begin
-	repeat
-		ingresarFicha(posicionX, posicionY, FICHA_JUGADOR);
-	until ( verificarValido(tablero, vectorDireccion, posicionX, posicionY, FICHA_JUGADOR, FICHA_BOT) );
 end;
 
 (*-----------------------Contar fichas-------------------------------*)
-
+//va a contar solo las fichas N y B
 procedure contarFichas(var tablero:tTablero);
 var i,n, negras, blancas:byte;
 begin
@@ -368,39 +365,30 @@ BEGIN
 
 	while not(juegoTerminado) do
 	begin
-		cargarVector(vectorDireccion);
+		cargarVectorDireccion(vectorDireccion);
+		
 		if( continuarJuego(tablero, vectorDireccion, contInv, juegoTerminado, FICHA_JUGADOR, FICHA_BOT) ) then
-		begin
-			
-			//ingresarFichaUsuario(tablero, vectorDireccion, posicionX, posicionY, FICHA_JUGADOR, FICHA_BOT);
-			//invertir_fichas(tablero, vectorDireccion, FICHA_JUGADOR, FICHA_BOT, posicionX, posicionY);
-			ingresarFicha(posicionX, posicionY, FICHA_JUGADOR);
-			
-			if( verificarValido(tablero, vectorDireccion, posicionX, posicionY, FICHA_JUGADOR, FICHA_BOT) )then
-				invertir_fichas(tablero, vectorDireccion, FICHA_JUGADOR, FICHA_BOT, posicionX, posicionY)
-			else
-			begin
-				repeat
-					ingresarFicha(posicionX, posicionY, FICHA_JUGADOR);
-				until ( verificarValido(tablero, vectorDireccion, posicionX, posicionY, FICHA_JUGADOR, FICHA_BOT) );
-				invertir_fichas(tablero, vectorDireccion, FICHA_JUGADOR, FICHA_BOT, posicionX, posicionY);
-			end;
-			dibujarTablero(tablero)
+		begin	
+			repeat
+				ingresarFicha(posicionX, posicionY, FICHA_JUGADOR);
+			until ( verificarCasillaValida(tablero, vectorDireccion, posicionX, posicionY, FICHA_JUGADOR, FICHA_BOT) );
+			invertir_fichas(tablero, vectorDireccion, FICHA_JUGADOR, FICHA_BOT, posicionX, posicionY);
 		end
 		else
 			writeln('Al jugador no le es posible ingresar fichas este turno');
 		
 		
-		cargarVector(vectorDireccion);
+		cargarVectorDireccion(vectorDireccion);
+		
 		if( continuarJuego(tablero, vectorDireccion, contInv, juegoTerminado, FICHA_BOT, FICHA_JUGADOR)) then
 		begin
 			resetearJugadaBot(mJugadaBot);
 			cargarJugadaBot(tablero, vectorDireccion, mJugadaBot);
 			posicionConMasFichas:= botGloton(mJugadaBot);
 			invertir_fichas(tablero, vectorDireccion, FICHA_BOT, FICHA_JUGADOR, posicionConMasFichas.posX, posicionConMasFichas.posY);
-			writeln('Jugada del bot: ', posicionConMasFichas.posY, '', posicionConMasFichas.posX);
-			
+			ClrScr();
 			dibujarTablero(tablero);
+			writeln('Jugada del bot: ', posicionConMasFichas.posY, '', posicionConMasFichas.posX);
 		end
 		else
 			writeln('Al bot no le es posible ingresar fichas este turno');
