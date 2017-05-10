@@ -148,6 +148,7 @@ begin
 end;
 
 (*------------------------------------------sePuedeJugar---------------------------------------*)
+//verifica que ambos jugadores tengan la oportunidad de jugar, en caso contrario, saltea su turno
 function sePuedeJugar (var tablero:tTablero; vectorDireccion:tDireccion; fichaAliada, fichaContraria:char):boolean;
   var i,j:byte;
       jugada:boolean;
@@ -327,6 +328,7 @@ begin
 end;
 
 (*-----------------------------------------continuarJuego------------------------------------*)
+//llamando a sePuedeJugar, verifica que ambos jugadores juegen. Si ambos no pueden jugar, se termina el juego
 function continuarJuego(var tablero:tTablero; vectorDireccion:tDireccion; var contInv:byte;var juegoTerminado:boolean; 
  fichaAliada, fichaContraria:char):boolean;
 	var resultado:boolean;
@@ -380,7 +382,7 @@ BEGIN
 	begin
 		fichaJugador:= FICHA_BLANCA;
 		fichaBot:= FICHA_NEGRA;
-		
+		cargarVectorDireccion(vectorDireccion);
 		cargarJugadaBot(tablero, vectorDireccion, mJugadaBot, fichaBot, fichaJugador);
 		posicionConMasFichas:= botGloton(mJugadaBot);
 		invertir_fichas(tablero, vectorDireccion, fichaBot, fichaJugador, posicionConMasFichas.posX, posicionConMasFichas.posY);
@@ -426,4 +428,5 @@ BEGIN
 	end;
 	
 	contarFichas(tablero, fichaJugador, fichaBot);
+	readln();
 END.
