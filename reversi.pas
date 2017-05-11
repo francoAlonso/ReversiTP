@@ -107,7 +107,7 @@ begin
 		posicionX:= posicionX + vectorDireccion[direccion].direccionX;
 		posicionY:= posicionY + vectorDireccion[direccion].direccionY;
 		
-		while ((tablero[posicionX, posicionY]=FICHA_BLANCA) or (tablero[posicionX, posicionY]=FICHA_NEGRA)) 
+		while (tablero[posicionX, posicionY]=ESPACIO_EN_BLANCO)and((tablero[posicionX, posicionY]=FICHA_BLANCA) or (tablero[posicionX, posicionY]=FICHA_NEGRA)) 
 		 and (not vectorDireccion[direccion].direccionValida) do
 		begin
 			if (tablero[posicionX, posicionY]=fichaContraria) then
