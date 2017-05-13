@@ -408,8 +408,11 @@ BEGIN
 		end
 		else
 			writeln('Al jugador no le es posible ingresar fichas este turno');
-		
-		
+			
+		ClrScr();
+		dibujarTablero(tablero);
+		write('Apriete enter para que el bot haga su jugada');
+		readln();
 		cargarVectorDireccion(vectorDireccion);
 		
 		if( continuarJuego(tablero, vectorDireccion, contInv, juegoTerminado, fichaBot, fichaJugador)) then
