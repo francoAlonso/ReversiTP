@@ -284,7 +284,7 @@ procedure ingresarFicha(var tablero:tTablero; var vectorDireccion:tDireccion; va
 	var input:string[2];
 		code:byte;(*Variable para que funcione Val() unicamente*)
 begin
-     write('Ingrese las coordenadas en X e Y entre 1 a ', dimension-1, ' para cada digito: ');
+     write('Ingrese las coordenadas en Y e X entre 1 a ', dimension-1, ' para cada digito: ');
      readln(input);
      Val(input[1], posicionY, code);
      Val(input[2], posicionX, code);
@@ -355,7 +355,7 @@ begin
 	repeat
 		write('Elija el color de su ficha, N o B? ');
 		readln(color);
-	until (color='n') or (color='b');
+	until (color='n') or (color='b') or (color='B') or (color='N');
 end;
 
 (*---------------------Juego--------------------------------------*)
