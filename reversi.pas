@@ -54,10 +54,10 @@ begin
                   else
                       tablero[i,n]:=ESPACIO_EN_BLANCO;
              end;
-      tablero[4,4]:=FICHA_NEGRA;
-      tablero[4,5]:=FICHA_BLANCA;
-      tablero[5,4]:=FICHA_BLANCA;
-      tablero[5,5]:=FICHA_NEGRA;
+      tablero[4,4]:=FICHA_BLANCA;
+      tablero[4,5]:=FICHA_NEGRA;
+      tablero[5,4]:=FICHA_NEGRA;
+      tablero[5,5]:=FICHA_BLANCA;
 end;
 
 (*-------------------CargarVectorDireccion-----------------------*)
