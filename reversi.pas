@@ -378,7 +378,7 @@ BEGIN
 	
 	verificarColorValido(fichaIngresadaPorUsuario);
 	
-	if (fichaIngresadaPorUsuario = 'b') then
+	if (fichaIngresadaPorUsuario = 'b') or (fichaIngresadaPorUsuario = 'B') then
 	begin
 		fichaJugador:= FICHA_BLANCA;
 		fichaBot:= FICHA_NEGRA;
